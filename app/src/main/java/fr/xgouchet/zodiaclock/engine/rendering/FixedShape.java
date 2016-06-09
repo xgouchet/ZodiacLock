@@ -52,7 +52,7 @@ public abstract class FixedShape extends Entity {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(long deltaNanos, long timeMs) {
     }
 
     @Override

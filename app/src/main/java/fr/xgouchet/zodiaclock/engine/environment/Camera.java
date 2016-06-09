@@ -39,7 +39,7 @@ public class Camera extends Entity {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(long deltaNanos, long timeMs) {
     }
 
     @Override

@@ -22,6 +22,6 @@ void main(){
 
     vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
     vec3 lightDir = normalize(u_LightPos - v_Position);
-    float diffuse = max(dot(normalDir, lightDir), 0.25);
+    float diffuse = max(dot(normalDir, lightDir), 0.1);
     gl_FragColor = diffuse * texture;
 }

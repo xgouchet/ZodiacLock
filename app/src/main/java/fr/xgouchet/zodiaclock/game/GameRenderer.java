@@ -4,10 +4,13 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.util.Log;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -28,7 +31,11 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     private final RenderContext renderContext = new RenderContext();
     private final GameScene gameScene = new GameScene();
+
+
     private boolean mError;
+
+    private long nanoTick;
 
     @MainThread
     public GameRenderer(@NonNull Context context) {
@@ -39,9 +46,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     @UiThread
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         try {
-            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            checkGlError();
-
             // prepare scene
             gameScene.prepare(context);
 
@@ -81,11 +85,16 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         if (mError) return;
 
         try {
-            GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-            checkGlError();
 
-            if (gameScene.needsUpdate())
-                gameScene.onUpdate();
+            long newTick = System.nanoTime();
+            long deltaNanos = newTick - nanoTick;
+            long timeMs = TimeUnit.NANOSECONDS.toMillis(newTick);
+            nanoTick = newTick;
+
+            if (gameScene.needsUpdate()) {
+                gameScene.onUpdate(deltaNanos, timeMs);
+            }
+
             if (gameScene.needsRender())
                 gameScene.onRender(renderContext);
         } catch (GLException e) {

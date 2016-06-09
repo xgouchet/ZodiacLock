@@ -39,9 +39,9 @@ public class EntityAggregator extends Entity {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(long deltaNanos, long timeMs) {
         for (Entity entity : mEntities) {
-            if (entity.needsUpdate()) entity.onUpdate();
+            if (entity.needsUpdate()) entity.onUpdate(deltaNanos, timeMs);
         }
     }
 

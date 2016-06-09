@@ -20,11 +20,11 @@ public abstract class Entity {
 
     public abstract void onPrepare(@NonNull Context context) throws GLException;
 
-    public abstract void onUpdate();
+    public abstract boolean needsUpdate();
 
-    public abstract void onRender(@NonNull RenderContext renderContext) throws GLException;
+    public abstract void onUpdate(long deltaNanos, long timeMs);
 
     public abstract boolean needsRender();
 
-    public abstract boolean needsUpdate();
+    public abstract void onRender(@NonNull RenderContext renderContext) throws GLException;
 }

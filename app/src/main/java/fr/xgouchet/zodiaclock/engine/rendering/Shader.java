@@ -93,7 +93,7 @@ public class Shader extends Entity {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(long deltaNanos, long timeMs) {
     }
 
     @Override
