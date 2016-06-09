@@ -1,4 +1,4 @@
-package fr.xgouchet.zodiaclock.engine;
+package fr.xgouchet.zodiaclock.engine.rendering;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,14 +7,19 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
-import static fr.xgouchet.zodiaclock.engine.Utils.checkGlError;
+import fr.xgouchet.zodiaclock.engine.Entity;
+import fr.xgouchet.zodiaclock.engine.GLException;
+import fr.xgouchet.zodiaclock.engine.RenderContext;
+
+import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 
 
 /**
  * @author Xavier Gouchet
  */
-public class Texture extends IEntity {
+public class Texture extends Entity {
 
     public static final int TYPE_DIFFUSE = 0;
     public static final int TYPE_NORMAL = 1;
@@ -41,7 +46,7 @@ public class Texture extends IEntity {
     }
 
     @Override
-    public void onPrepare(Context context) throws GLException {
+    public void onPrepare(@NonNull Context context) throws GLException {
 
         // generate handle
         final int[] textureHandle = new int[1];
@@ -71,7 +76,21 @@ public class Texture extends IEntity {
     }
 
     @Override
-    public void onDraw(RenderContext renderContext) throws GLException {
+    public boolean needsUpdate() {
+        return false;
+    }
+
+    @Override
+    public void onUpdate() {
+    }
+
+    @Override
+    public boolean needsRender() {
+        return true;
+    }
+
+    @Override
+    public void onRender(@NonNull RenderContext renderContext) throws GLException {
         int textureSlot, textureSlotId, uniformHandle;
         switch (textureType) {
             case TYPE_DIFFUSE:

@@ -7,6 +7,7 @@ import android.content.pm.ConfigurationInfo;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.widget.Toast;
 
 import fr.xgouchet.zodiaclock.game.GameRenderer;
@@ -19,6 +20,7 @@ public class GameActivity extends Activity {
     private GLSurfaceView glSurfaceView;
 
     @Override
+    @MainThread
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         glSurfaceView = new GLSurfaceView(this);
@@ -46,12 +48,14 @@ public class GameActivity extends Activity {
     }
 
     @Override
+    @MainThread
     protected void onResume() {
         super.onResume();
         glSurfaceView.onResume();
     }
 
     @Override
+    @MainThread
     protected void onPause() {
         super.onPause();
         glSurfaceView.onPause();

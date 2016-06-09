@@ -1,4 +1,4 @@
-package fr.xgouchet.zodiaclock.engine;
+package fr.xgouchet.zodiaclock.engine.rendering;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -15,13 +15,17 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static fr.xgouchet.zodiaclock.engine.Utils.checkGlError;
+import fr.xgouchet.zodiaclock.engine.Entity;
+import fr.xgouchet.zodiaclock.engine.GLException;
+import fr.xgouchet.zodiaclock.engine.RenderContext;
+
+import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 
 
 /**
  * @author Xavier Gouchet
  */
-public class Shader extends IEntity {
+public class Shader extends Entity {
 
 
     @IntDef({GLES20.GL_VERTEX_SHADER, GLES20.GL_FRAGMENT_SHADER})
@@ -37,8 +41,8 @@ public class Shader extends IEntity {
 
     private int programHandle;
 
-    private int uniformModelMatrix;
-    private int uniformMVPMatrix;
+    private int uniformModelMatrix, uniformMVPMatrix;
+    private int uniformLightPosition;
     private int uniformDiffuseTexture, uniformNormalTexture;
 
     private int attrVertexPosition;
@@ -50,7 +54,7 @@ public class Shader extends IEntity {
     }
 
     @Override
-    public void onPrepare(Context context) throws GLException {
+    public void onPrepare(@NonNull Context context) throws GLException {
         int vsHandle = prepareShader(context, GLES20.GL_VERTEX_SHADER, vertexShaderId);
         int fsHandle = prepareShader(context, GLES20.GL_FRAGMENT_SHADER, fragmentShaderId);
         Log.i(TAG, String.format("vs : %d; fs : %d;", vsHandle, fsHandle));
@@ -70,6 +74,8 @@ public class Shader extends IEntity {
         checkGlError();
         uniformMVPMatrix = GLES20.glGetUniformLocation(programHandle, "u_MVPMatrix");
         checkGlError();
+        uniformLightPosition = GLES20.glGetUniformLocation(programHandle, "u_LightPos");
+        checkGlError();
         uniformDiffuseTexture = GLES20.glGetUniformLocation(programHandle, "u_DiffuseTexture");
         checkGlError();
         uniformNormalTexture = GLES20.glGetUniformLocation(programHandle, "u_NormalTexture");
@@ -82,7 +88,21 @@ public class Shader extends IEntity {
     }
 
     @Override
-    public void onDraw(RenderContext renderContext) throws GLException {
+    public boolean needsUpdate() {
+        return false;
+    }
+
+    @Override
+    public void onUpdate() {
+    }
+
+    @Override
+    public boolean needsRender() {
+        return true;
+    }
+
+    @Override
+    public void onRender(@NonNull RenderContext renderContext) throws GLException {
         if (programHandle == 0) {
             return;
         }
@@ -90,11 +110,21 @@ public class Shader extends IEntity {
         GLES20.glUseProgram(programHandle);
         checkGlError();
 
+        // environment
+        GLES20.glUniform3fv(renderContext.uniformLightPosition, 1, renderContext.vecLightPos, 0);
+        checkGlError();
+        GLES20.glUniformMatrix4fv(renderContext.uniformMVPMatrix, 1, false, renderContext.matrixMVP, 0);
+        checkGlError();
+
+
         renderContext.attrVertexPosition = attrVertexPosition;
         renderContext.attrVertexTexCoords = attrVertexTexCoords;
 
         renderContext.uniformMVPMatrix = uniformMVPMatrix;
         renderContext.uniformModelMatrix = uniformModelMatrix;
+
+        renderContext.uniformLightPosition = uniformLightPosition;
+
         renderContext.uniformDiffuseTexture = uniformDiffuseTexture;
         renderContext.uniformNormalTexture = uniformNormalTexture;
     }

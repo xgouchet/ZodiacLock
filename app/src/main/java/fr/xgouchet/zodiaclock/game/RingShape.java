@@ -2,7 +2,7 @@ package fr.xgouchet.zodiaclock.game;
 
 import android.opengl.GLES20;
 
-import fr.xgouchet.zodiaclock.engine.FixedShape;
+import fr.xgouchet.zodiaclock.engine.rendering.FixedShape;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;

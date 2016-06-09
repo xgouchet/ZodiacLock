@@ -10,6 +10,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
  * @author Xavier Gouchet
  */
 public class GameConfigChooser implements GLSurfaceView.EGLConfigChooser {
+
     @Override
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
         int attribs[] = {

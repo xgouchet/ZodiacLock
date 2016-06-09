@@ -1,12 +1,16 @@
-package fr.xgouchet.zodiaclock.engine;
+package fr.xgouchet.zodiaclock.engine.environment;
 
 import android.content.Context;
 import android.opengl.Matrix;
+import android.support.annotation.NonNull;
+
+import fr.xgouchet.zodiaclock.engine.Entity;
+import fr.xgouchet.zodiaclock.engine.RenderContext;
 
 /**
  * @author Xavier Gouchet
  */
-public class Camera extends IEntity {
+public class Camera extends Entity {
 
     private float eyeX, eyeY, eyeZ;
     private float targetX, targetY, targetZ;
@@ -25,12 +29,26 @@ public class Camera extends IEntity {
     }
 
     @Override
-    public void onPrepare(Context context) {
+    public void onPrepare(@NonNull Context context) {
 
     }
 
     @Override
-    public void onDraw(RenderContext renderContext) {
+    public boolean needsUpdate() {
+        return false;
+    }
+
+    @Override
+    public void onUpdate() {
+    }
+
+    @Override
+    public boolean needsRender() {
+        return true;
+    }
+
+    @Override
+    public void onRender(@NonNull RenderContext renderContext) {
         Matrix.setLookAtM(renderContext.matrixV, 0, eyeX, eyeY, eyeZ, targetX, targetY, targetZ, 0, 1, 0);
     }
 }
