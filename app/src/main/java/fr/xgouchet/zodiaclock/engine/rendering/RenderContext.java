@@ -1,4 +1,4 @@
-package fr.xgouchet.zodiaclock.engine;
+package fr.xgouchet.zodiaclock.engine.rendering;
 
 /**
  * @author Xavier Gouchet
@@ -10,6 +10,7 @@ public class RenderContext {
     public final float[] matrixMV = new float[16];
     public final float[] matrixMVP = new float[16];
 
+    public float[] vecEyePos = new float[3];
     public final float[] vecLightPos = new float[3];
 
     public int attrVertexPosition = -1;
@@ -22,4 +23,5 @@ public class RenderContext {
 
     public int uniformDiffuseTexture = -1;
     public int uniformNormalTexture = -1;
+
 }

@@ -9,9 +9,8 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
-import fr.xgouchet.zodiaclock.engine.Entity;
+import fr.xgouchet.zodiaclock.engine.entities.Entity;
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 

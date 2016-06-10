@@ -1,4 +1,4 @@
-package fr.xgouchet.zodiaclock;
+package fr.xgouchet.zodiaclock.ui;
 
 import android.opengl.GLSurfaceView;
 

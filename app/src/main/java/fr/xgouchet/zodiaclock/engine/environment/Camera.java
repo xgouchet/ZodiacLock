@@ -4,8 +4,8 @@ import android.content.Context;
 import android.opengl.Matrix;
 import android.support.annotation.NonNull;
 
-import fr.xgouchet.zodiaclock.engine.Entity;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
+import fr.xgouchet.zodiaclock.engine.entities.Entity;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 
 /**
  * @author Xavier Gouchet
@@ -49,6 +49,9 @@ public class Camera extends Entity {
 
     @Override
     public void onRender(@NonNull RenderContext renderContext) {
+        renderContext.vecEyePos[0] = eyeX;
+        renderContext.vecEyePos[1] = eyeY;
+        renderContext.vecEyePos[2] = eyeZ;
         Matrix.setLookAtM(renderContext.matrixV, 0, eyeX, eyeY, eyeZ, targetX, targetY, targetZ, 0, 1, 0);
     }
 }

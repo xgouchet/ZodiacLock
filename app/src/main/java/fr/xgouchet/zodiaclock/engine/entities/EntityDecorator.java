@@ -1,7 +1,10 @@
-package fr.xgouchet.zodiaclock.engine;
+package fr.xgouchet.zodiaclock.engine.entities;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+
+import fr.xgouchet.zodiaclock.engine.GLException;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 
 /**
  * @author Xavier Gouchet

@@ -3,8 +3,8 @@ package fr.xgouchet.zodiaclock.engine.environment;
 import android.support.annotation.NonNull;
 
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
-import fr.xgouchet.zodiaclock.engine.Transform;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
+import fr.xgouchet.zodiaclock.engine.rendering.Transform;
 
 
 /**

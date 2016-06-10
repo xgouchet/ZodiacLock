@@ -4,9 +4,9 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.support.annotation.NonNull;
 
-import fr.xgouchet.zodiaclock.engine.Entity;
+import fr.xgouchet.zodiaclock.engine.entities.Entity;
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 

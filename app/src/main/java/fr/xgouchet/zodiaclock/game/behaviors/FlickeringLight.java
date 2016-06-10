@@ -3,10 +3,10 @@ package fr.xgouchet.zodiaclock.game.behaviors;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import fr.xgouchet.zodiaclock.engine.EntityDecorator;
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
+import fr.xgouchet.zodiaclock.engine.entities.EntityDecorator;
 import fr.xgouchet.zodiaclock.engine.environment.Light;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -37,11 +37,11 @@ public class FlickeringLight extends EntityDecorator<Light> {
 
     @Override
     protected void onDecoratedWillUpdate(long deltaNanos, long timeMs, @NonNull Light decorated) {
-        double angle = (timeMs / 1000.0) * Math.PI * 2.0;
+        double turnPerSeconds = (timeMs / 1000.0) * Math.PI * 2.0;
         decorated.translateTo(
-                (float) (-5 + cos(angle)),
-                (float) (5 + sin(angle)),
-                5);
+                (float) (50 + 2 * cos(0.25 * turnPerSeconds)),
+                (float) (-50 + 10 * sin(0.25 * turnPerSeconds)),
+                50);
     }
 
     @Override

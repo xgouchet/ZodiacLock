@@ -3,15 +3,20 @@ package fr.xgouchet.zodiaclock.game.behaviors;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import fr.xgouchet.zodiaclock.engine.EntityDecorator;
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
-import fr.xgouchet.zodiaclock.engine.Transform;
+import fr.xgouchet.zodiaclock.engine.entities.EntityDecorator;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
+import fr.xgouchet.zodiaclock.engine.rendering.Transform;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 /**
  * @author Xavier Gouchet
  */
 public class RotateWheel extends EntityDecorator<Transform> {
+
+    private float angle;
 
     public RotateWheel(@NonNull Transform decorated) {
         super(decorated);
@@ -32,6 +37,12 @@ public class RotateWheel extends EntityDecorator<Transform> {
 
     @Override
     protected void onDecoratedWillUpdate(long deltaNanos, long timeMs, @NonNull Transform decorated) {
+        angle = timeMs / 1000.0f;
+
+        decorated.setOrientation(
+                (float) cos(angle), (float) sin(angle), 0f,
+                0f, 1f, 0f
+        );
         // TODO Rotate
     }
 

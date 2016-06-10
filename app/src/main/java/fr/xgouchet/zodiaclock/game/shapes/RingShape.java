@@ -1,4 +1,4 @@
-package fr.xgouchet.zodiaclock.game;
+package fr.xgouchet.zodiaclock.game.shapes;
 
 import android.opengl.GLES20;
 
@@ -45,7 +45,7 @@ public class RingShape extends FixedShape {
             data[index++] = 0;
             // Tex coords
             data[index++] = (float) ((cos(angle) * innerRadius * texCoordsScale) + 1) / 2.0f;
-            data[index++] = (float) ((sin(angle) * innerRadius * texCoordsScale) + 1) / 2.0f;
+            data[index++] = -(float) ((sin(angle) * innerRadius * texCoordsScale) + 1) / 2.0f;
 
             // Pos
             data[index++] = (float) (cos(angle) * outerRadius);
@@ -53,7 +53,7 @@ public class RingShape extends FixedShape {
             data[index++] = 0;
             // Tex coords
             data[index++] = (float) ((cos(angle) * outerRadius * texCoordsScale) + 1) / 2.0f;
-            data[index++] = (float) ((sin(angle) * outerRadius * texCoordsScale) + 1) / 2.0f;
+            data[index++] = -(float) ((sin(angle) * outerRadius * texCoordsScale) + 1) / 2.0f;
 
             angle += ANGLE_STEP;
         }

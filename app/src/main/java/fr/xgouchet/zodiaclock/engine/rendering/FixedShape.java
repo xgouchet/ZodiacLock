@@ -8,9 +8,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import fr.xgouchet.zodiaclock.engine.Entity;
+import fr.xgouchet.zodiaclock.engine.entities.Entity;
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 

@@ -15,9 +15,8 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
-import fr.xgouchet.zodiaclock.engine.Entity;
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
+import fr.xgouchet.zodiaclock.engine.entities.Entity;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 
@@ -111,9 +110,9 @@ public class Shader extends Entity {
         checkGlError();
 
         // environment
+//        Log.v("Shader", "Update light position " + renderContext.uniformLightPosition
+//                + " → " + Arrays.toString(renderContext.vecLightPos));
         GLES20.glUniform3fv(renderContext.uniformLightPosition, 1, renderContext.vecLightPos, 0);
-        checkGlError();
-        GLES20.glUniformMatrix4fv(renderContext.uniformMVPMatrix, 1, false, renderContext.matrixMVP, 0);
         checkGlError();
 
 

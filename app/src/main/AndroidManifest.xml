@@ -7,7 +7,7 @@
         android:label="ZodiacLock"
         android:supportsRtl="true">
 
-        <activity android:name=".GameActivity">
+        <activity android:name=".ui.GameActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

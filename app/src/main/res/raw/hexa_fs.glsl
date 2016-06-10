@@ -14,14 +14,24 @@ varying vec3 v_Tangent;
 varying vec3 v_Binorm;
 
 void main(){
-
+    // Normal map deform
     vec3 normalDeform = normalize((texture2D(u_NormalTexture, v_TexCoords).rgb * 2.0) - 1.0);
-    vec3 normalDir = (v_Tangent * normalDeform.x) + (v_Binorm * normalDeform.y) + (v_Normal * normalDeform.z);
-    // soften the normal map...
-    normalDir = normalize(normalDir + v_Normal);
+    vec3 normalDir = vec3(
+                            (v_Tangent.x * normalDeform.x) + (v_Tangent.y * normalDeform.y) + (v_Tangent.z * normalDeform.z),
+                            (v_Binorm.x * normalDeform.x) + (v_Binorm.y * normalDeform.y) + (v_Binorm.z * normalDeform.z),
+                            (v_Normal.x * normalDeform.x) + (v_Normal.y * normalDeform.y) + (v_Normal.z * normalDeform.z)
+                            );
 
-    vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
+//    vec3 normalDir = v_Normal ;
+
+    // diffuse
     vec3 lightDir = normalize(u_LightPos - v_Position);
     float diffuse = max(dot(normalDir, lightDir), 0.1);
-    gl_FragColor = diffuse * texture;
+
+    // specular
+    vec3 halfVector = normalize(v_Position + lightDir);
+    float spec = pow (max (dot (halfVector, normalDir), 0.0), 2.0)  ;
+
+    vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
+    gl_FragColor = (diffuse * texture * vec4(1, 1, 1, 1)) + (spec * vec4(1.0, 0.5, 0.0, 1)) ;
 }

@@ -4,11 +4,12 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,9 +17,10 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import fr.xgouchet.zodiaclock.engine.GLException;
-import fr.xgouchet.zodiaclock.engine.RenderContext;
+import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
+import static java.lang.Math.abs;
 
 /**
  * @author Xavier Gouchet
@@ -32,14 +34,17 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private final RenderContext renderContext = new RenderContext();
     private final GameScene gameScene = new GameScene();
 
-
-    private boolean mError;
+    private int width, height;
+    private boolean error;
 
     private long nanoTick;
 
     @MainThread
-    public GameRenderer(@NonNull Context context) {
+    public GameRenderer(@NonNull Context context, GLSurfaceView glSurfaceView) {
         this.context = context;
+
+        glSurfaceView.setOnTouchListener(touchListener);
+        glSurfaceView.setRenderer(this);
     }
 
     @Override
@@ -51,7 +56,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         } catch (GLException e) {
             Log.e("GameRenderer", "onSurfaceCreated", e);
-            mError = true;
+            error = true;
         }
     }
 
@@ -64,7 +69,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             checkGlError();
         } catch (GLException e) {
             Log.e("GameRenderer", "onSurfaceChanged", e);
-            mError = true;
+            error = true;
         }
 
         // update projection matrix
@@ -77,12 +82,16 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                 1.0f,       // near
                 10.0f       // far
         );
+
+        // remember the size
+        this.width = width;
+        this.height = height;
     }
 
     @Override
     @UiThread
     public void onDrawFrame(GL10 gl) {
-        if (mError) return;
+        if (error) return;
 
         try {
 
@@ -99,7 +108,65 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                 gameScene.onRender(renderContext);
         } catch (GLException e) {
             Log.e("GameRenderer", "onDrawFrame", e);
-            mError = true;
+            error = true;
         }
     }
+
+    private final View.OnTouchListener touchListener = new View.OnTouchListener() {
+
+        float matrinxInv[] = new float[16];
+        float matrinxTransform[] = new float[16];
+        float screenPosition[] = new float[4];
+        float worldPosition[] = new float[4];
+        float planePosition[] = new float[3];
+
+        float ray[] = new float[3];
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            screenPosition[0] = ((event.getX() / width) * 2) - 1;
+            screenPosition[1] = 1 - ((event.getY() / height) * 2); // invert Y
+            screenPosition[2] = -1.0f;
+            screenPosition[3] = 1.0f;
+
+            Matrix.multiplyMM(matrinxTransform, 0, renderContext.matrixP, 0, renderContext.matrixV, 0);
+            Matrix.invertM(matrinxInv, 0,
+                    matrinxTransform, 0);
+            Matrix.multiplyMV(worldPosition, 0, matrinxInv, 0, screenPosition, 0);
+
+//                Log.d("GameRenderer", "screen → " + Arrays.toString(screenPosition));
+//                Log.d("GameRenderer", "world  → " + Arrays.toString(worldPosition));
+
+            ray[0] = worldPosition[0] - renderContext.vecEyePos[0];
+            ray[1] = worldPosition[1] - renderContext.vecEyePos[1];
+            ray[2] = worldPosition[2] - renderContext.vecEyePos[2];
+
+            float denom = /* (ray[0] * 0) + (ray[1] * 0) + */ (ray[2] * 1);
+            if (abs(denom) > 0.00001) {
+                float t = /* (-renderContext.vecEyePos[0] * 0) + (-renderContext.vecEyePos[1] * 0) + */ (-renderContext.vecEyePos[2] * 1);
+                t /= denom;
+                planePosition[0] = renderContext.vecEyePos[0] + (t * ray[0]);
+                planePosition[1] = renderContext.vecEyePos[1] + (t * ray[1]);
+                planePosition[2] = renderContext.vecEyePos[2] + (t * ray[2]);
+
+//                    Log.d("GameRenderer", "plane  → " + Arrays.toString(planePosition));
+
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        gameScene.onTouchDown(planePosition);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        gameScene.onTouchMove(planePosition);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        gameScene.onTouchUp(planePosition);
+                        break;
+                }
+            }
+
+
+            return true;
+        }
+    };
 }
