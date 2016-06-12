@@ -7,7 +7,11 @@
         android:label="ZodiacLock"
         android:supportsRtl="true">
 
-        <activity android:name=".ui.GameActivity">
+        <activity
+            android:name=".ui.GameActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

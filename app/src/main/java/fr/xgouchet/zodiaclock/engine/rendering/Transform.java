@@ -63,7 +63,7 @@ public class Transform extends Entity {
         System.arraycopy(modelMatrix, offset, dest, 0, size);
     }
 
-    public void translateTo(float x, float y, int z) {
+    public void translateTo(float x, float y, float z) {
         modelMatrix[12] = x;
         modelMatrix[13] = y;
         modelMatrix[14] = z;

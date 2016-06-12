@@ -1,13 +1,19 @@
 package fr.xgouchet.zodiaclock.game.behaviors;
 
 import android.content.Context;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.view.MotionEvent;
+
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import fr.xgouchet.zodiaclock.engine.GLException;
 import fr.xgouchet.zodiaclock.engine.entities.Entity;
 import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
+import fr.xgouchet.zodiaclock.events.RingEvent;
+import fr.xgouchet.zodiaclock.events.TouchEvent;
 import fr.xgouchet.zodiaclock.game.shapes.RingShape;
 
 import static java.lang.Math.abs;
@@ -20,20 +26,35 @@ import static java.lang.Math.sqrt;
 /**
  * @author Xavier Gouchet
  */
-public class InteractiveRing extends Entity implements TouchListener {
+public class InteractiveRing extends Entity {
 
-    public static final double TWO_PI = Math.PI * 2.0f;
+    public static final int RING_ID_INNER = 0;
+    public static final int RING_ID_MIDDLE = 1;
+    public static final int RING_ID_OUTER = 2;
+
+    @IntDef({RING_ID_INNER, RING_ID_MIDDLE, RING_ID_OUTER})
+    public @interface RingId {
+    }
+
+
     private static final int SNAP_COUNT = 12;
     private static final double SNAP_ANGLE = Math.PI * 2.0 / SNAP_COUNT;
 
-    private static final float DETECT_THRESHOLD = 0.05f;
 
-    private final float radius, thickness;
+    @NonNull
+    private final Bus bus;
+
     private final float innerRadius;
     private final float outerRadius;
 
+    @NonNull
     private final Transform transform;
+    @NonNull
     private final RingShape shape;
+
+    @NonNull
+    private final RingEvent ringEvent;
+
     private boolean dragging;
     private float initialDragAngle;
     private float angle = 0;
@@ -41,14 +62,17 @@ public class InteractiveRing extends Entity implements TouchListener {
     private float snappedAngle = 0;
 
 
-    public InteractiveRing(float radius, float thickness) {
-        this.radius = radius;
-        this.thickness = thickness;
+    public InteractiveRing(@NonNull Bus bus, @RingId int id, float radius, float thickness) {
+        this.bus = bus;
         this.innerRadius = radius - (thickness / 2.0f);
         this.outerRadius = radius + (thickness / 2.0f);
 
         transform = new Transform();
-        shape = new RingShape(radius, thickness, 1 / 4.0f);
+        shape = new RingShape(radius, thickness, Constants.TEX_COORDS_SCALE);
+
+        ringEvent = new RingEvent(id);
+
+        this.bus.register(this);
     }
 
 
@@ -65,7 +89,6 @@ public class InteractiveRing extends Entity implements TouchListener {
 
     @Override
     public void onUpdate(long deltaNanos, long timeMs) {
-
     }
 
     @Override
@@ -90,31 +113,43 @@ public class InteractiveRing extends Entity implements TouchListener {
         shape.onRender(renderContext);
     }
 
-    @Override
-    public void onTouchDown(float[] position) {
+
+    @Subscribe
+    public void onTouchEvent(TouchEvent event) {
+        switch (event.getType()) {
+            case MotionEvent.ACTION_DOWN:
+                onTouchDown(event.getWorldPosition());
+                break;
+            case MotionEvent.ACTION_MOVE:
+                onTouchMove(event.getWorldPosition());
+                break;
+            case MotionEvent.ACTION_UP:
+                onTouchUp();
+                break;
+        }
+    }
+
+    private void onTouchDown(float[] position) {
         double distFromCenter = sqrt(
                 (position[0] * position[0])
                         + (position[1] * position[1])
                         + (position[2] * position[2]));
 
-        dragging = (distFromCenter >= (innerRadius - DETECT_THRESHOLD))
-                && (distFromCenter <= (outerRadius + DETECT_THRESHOLD));
+        dragging = (distFromCenter >= (innerRadius - Constants.DETECT_THRESHOLD))
+                && (distFromCenter <= (outerRadius + Constants.DETECT_THRESHOLD));
         initialDragAngle = (float) atan2(position[1], position[0]);
     }
 
-    @Override
-    public void onTouchMove(float[] position) {
+    private void onTouchMove(float[] position) {
         if (!dragging) return;
 
-        Log.i("Ring", "Moving ring " + radius);
         float draggingAngle = (float) atan2(position[1], position[0]);
         float angleDelta = (draggingAngle - initialDragAngle);
         displayAngle = angle + angleDelta;
     }
 
 
-    @Override
-    public void onTouchUp(float[] position) {
+    private void onTouchUp() {
         if (!dragging) return;
 
         int snapped = (int) (round(displayAngle / SNAP_ANGLE) + SNAP_COUNT);
@@ -122,12 +157,12 @@ public class InteractiveRing extends Entity implements TouchListener {
         angle = displayAngle;
 
         while (snappedAngle - angle > Math.PI) {
-            angle += TWO_PI;
+            angle += Constants.TWO_PI;
         }
         if (angle - snappedAngle > Math.PI) {
-            angle -= TWO_PI;
+            angle -= Constants.TWO_PI;
         }
-        Log.i("Ring", "Snapping  ring " + radius + " from " + angle + " to " + snappedAngle);
+
         dragging = false;
     }
 }

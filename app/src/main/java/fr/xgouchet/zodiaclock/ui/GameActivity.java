@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.widget.Toast;
 
-import org.greenrobot.eventbus.EventBus;
-
 import fr.xgouchet.zodiaclock.game.GameRenderer;
 
 /**
@@ -34,13 +32,6 @@ public class GameActivity extends Activity {
             Toast.makeText(this, "We don't support crappy phones", Toast.LENGTH_SHORT).show();
             finish();
         }
-
-        // Prepare EventBus
-        EventBus.builder()
-                .logNoSubscriberMessages(false)
-                .logSubscriberExceptions(false)
-                .throwSubscriberException(false)
-                .installDefaultEventBus();
 
         // prepare surface view
         glSurfaceView = new GLSurfaceView(this);

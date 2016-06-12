@@ -1,7 +1,8 @@
 package fr.xgouchet.zodiaclock.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.support.annotation.NonNull;
+
+import com.squareup.otto.Bus;
 
 import fr.xgouchet.zodiaclock.R;
 import fr.xgouchet.zodiaclock.engine.entities.Entity;
@@ -13,34 +14,28 @@ import fr.xgouchet.zodiaclock.engine.rendering.Shader;
 import fr.xgouchet.zodiaclock.engine.rendering.Texture;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
 import fr.xgouchet.zodiaclock.game.behaviors.FlickeringLight;
+import fr.xgouchet.zodiaclock.game.behaviors.InteractiveDisc;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveRing;
-import fr.xgouchet.zodiaclock.game.behaviors.TouchListener;
 import fr.xgouchet.zodiaclock.game.shapes.DiscShape;
 
 /**
  * @author Xavier Gouchet
  */
-public class GameScene extends EntityAggregator implements TouchListener {
+public class GameScene extends EntityAggregator {
 
-    List<TouchListener> touchListeners = new ArrayList<>();
+    @NonNull
+    private final Bus bus;
 
     private InteractiveRing innerRing, middleRing, outerRing;
 
-    public GameScene() {
-
+    public GameScene(@NonNull Bus bus) {
+        this.bus = bus;
         add(createBackgtround());
         add(createCamera());
         add(createLights());
 
         add(createRings());
-        add(createMarbles());
-    }
-
-    private Entity createMarbles() {
-        EntityAggregator marbles = new EntityAggregator();
-        marbles.add(new Transform());
-        marbles.add(new DiscShape(0.65f, 1 / 4.0f));
-        return marbles;
+        add(createCentralButton());
     }
 
     private Entity createBackgtround() {
@@ -68,40 +63,21 @@ public class GameScene extends EntityAggregator implements TouchListener {
         ringsGroup.add(new Texture(R.drawable.debug, Texture.TYPE_DIFFUSE));
         ringsGroup.add(new Texture(R.drawable.sand_normal, Texture.TYPE_NORMAL));
 
-        innerRing = new InteractiveRing(1.25f, 0.75f);
+        innerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_INNER, 1.25f, 0.75f);
         ringsGroup.add(innerRing);
-        touchListeners.add(innerRing);
 
-        middleRing = new InteractiveRing(2.25f, 0.75f);
+        middleRing = new InteractiveRing(bus, InteractiveRing.RING_ID_MIDDLE, 2.25f, 0.75f);
         ringsGroup.add(middleRing);
-        touchListeners.add(middleRing);
 
-        outerRing = new InteractiveRing(3.25f, 0.75f);
+        outerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_OUTER, 3.25f, 0.75f);
         ringsGroup.add(outerRing);
-        touchListeners.add(outerRing);
 
         return ringsGroup;
     }
 
-
-    @Override
-    public void onTouchDown(float[] position) {
-        for (TouchListener listener : touchListeners) {
-            listener.onTouchDown(position);
-        }
+    private Entity createCentralButton() {
+        return new InteractiveDisc(bus, 0.65f);
     }
 
-    @Override
-    public void onTouchMove(float[] position) {
-        for (TouchListener listener : touchListeners) {
-            listener.onTouchMove(position);
-        }
-    }
 
-    @Override
-    public void onTouchUp(float[] position) {
-        for (TouchListener listener : touchListeners) {
-            listener.onTouchUp(position);
-        }
-    }
 }

@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.squareup.otto.Bus;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -18,6 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import fr.xgouchet.zodiaclock.engine.GLException;
 import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
+import fr.xgouchet.zodiaclock.events.TouchEvent;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 import static java.lang.Math.abs;
@@ -30,14 +33,19 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     @NonNull
     private final Context context;
+    @NonNull
+    private final Bus bus = new Bus();
 
+    @NonNull
     private final RenderContext renderContext = new RenderContext();
-    private final GameScene gameScene = new GameScene();
+    @NonNull
+    private final GameScene gameScene = new GameScene(bus);
 
     private int width, height;
     private boolean error;
 
     private long nanoTick;
+
 
     @MainThread
     public GameRenderer(@NonNull Context context, GLSurfaceView glSurfaceView) {
@@ -114,13 +122,15 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     private final View.OnTouchListener touchListener = new View.OnTouchListener() {
 
-        float matrinxInv[] = new float[16];
-        float matrinxTransform[] = new float[16];
-        float screenPosition[] = new float[4];
-        float worldPosition[] = new float[4];
-        float planePosition[] = new float[3];
+        final float matrinxInv[] = new float[16];
+        final float matrinxTransform[] = new float[16];
+        final float screenPosition[] = new float[4];
+        final float worldPosition[] = new float[4];
+        final float planePosition[] = new float[3];
 
-        float ray[] = new float[3];
+        final float ray[] = new float[3];
+
+        final TouchEvent touchEvent = new TouchEvent();
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -135,9 +145,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                     matrinxTransform, 0);
             Matrix.multiplyMV(worldPosition, 0, matrinxInv, 0, screenPosition, 0);
 
-//                Log.d("GameRenderer", "screen → " + Arrays.toString(screenPosition));
-//                Log.d("GameRenderer", "world  → " + Arrays.toString(worldPosition));
-
             ray[0] = worldPosition[0] - renderContext.vecEyePos[0];
             ray[1] = worldPosition[1] - renderContext.vecEyePos[1];
             ray[2] = worldPosition[2] - renderContext.vecEyePos[2];
@@ -150,19 +157,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                 planePosition[1] = renderContext.vecEyePos[1] + (t * ray[1]);
                 planePosition[2] = renderContext.vecEyePos[2] + (t * ray[2]);
 
-//                    Log.d("GameRenderer", "plane  → " + Arrays.toString(planePosition));
 
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        gameScene.onTouchDown(planePosition);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        gameScene.onTouchMove(planePosition);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        gameScene.onTouchUp(planePosition);
-                        break;
-                }
+                touchEvent.update(planePosition, event.getActionMasked());
+                bus.post(touchEvent);
             }
 
 
