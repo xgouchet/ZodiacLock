@@ -6,6 +6,9 @@ uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_NormalTexture;
 uniform vec3 u_LightPos;
 
+uniform vec4 u_DiffuseColor;
+uniform vec4 u_SpecularColor;
+
 // per fragment input
 varying vec3 v_Position;
 varying vec2 v_TexCoords;
@@ -26,12 +29,13 @@ void main(){
 
     // diffuse
     vec3 lightDir = normalize(u_LightPos - v_Position);
-    float diffuse = max(dot(normalDir, lightDir), 0.1);
+    float diffuse = max(dot(normalDir, lightDir), 0.15);
 
     // specular
     vec3 halfVector = normalize(v_Position + lightDir);
-    float spec = pow (max (dot (halfVector, normalDir), 0.0), 2.0)  ;
+    float spec = pow (max (dot (halfVector, normalDir), 0.0), 10.0)  ;
 
     vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
-    gl_FragColor = (diffuse * texture * vec4(1, 1, 1, 1)) + (spec * vec4(1.0, 0.5, 0.0, 1)) ;
+    gl_FragColor = (diffuse * texture * u_DiffuseColor)
+                    + (spec * u_SpecularColor);
 }

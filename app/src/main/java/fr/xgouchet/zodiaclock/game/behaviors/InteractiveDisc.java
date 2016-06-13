@@ -8,8 +8,10 @@ import android.view.MotionEvent;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import fr.xgouchet.zodiaclock.R;
 import fr.xgouchet.zodiaclock.engine.GLException;
 import fr.xgouchet.zodiaclock.engine.entities.Entity;
+import fr.xgouchet.zodiaclock.engine.rendering.Material;
 import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
 import fr.xgouchet.zodiaclock.events.TouchEvent;
@@ -27,6 +29,8 @@ public class InteractiveDisc extends Entity {
     private final Bus bus;
 
     @NonNull
+    private final Material material;
+    @NonNull
     private final Transform transform;
     @NonNull
     private final DiscShape shape;
@@ -41,6 +45,7 @@ public class InteractiveDisc extends Entity {
         this.bus = bus;
         this.radius = radius;
 
+        material = new Material(R.color.blue, R.color.white);
         transform = new Transform();
         shape = new DiscShape(radius, Constants.TEX_COORDS_SCALE);
 
@@ -49,6 +54,7 @@ public class InteractiveDisc extends Entity {
 
     @Override
     public void onPrepare(@NonNull Context context) throws GLException {
+        material.onPrepare(context);
         transform.onPrepare(context);
         shape.onPrepare(context);
     }
@@ -70,10 +76,11 @@ public class InteractiveDisc extends Entity {
     @Override
     public void onRender(@NonNull RenderContext renderContext) throws GLException {
         if (abs(snappedZ - displayZ) > .00001) {
-            displayZ = displayZ + ((snappedZ - displayZ) * .25f);
+            displayZ = displayZ + ((snappedZ - displayZ) * .35f);
             transform.translateTo(0, 0, displayZ);
         }
 
+        material.onRender(renderContext);
         transform.onRender(renderContext);
         shape.onRender(renderContext);
     }
@@ -129,7 +136,8 @@ public class InteractiveDisc extends Entity {
                         + (position[1] * position[1])
                         + (position[2] * position[2]));
 
-            if ((distFromCenter <= (radius + Constants.DETECT_THRESHOLD))) Log.i("Disc", "Clicked on disc !");
+        if ((distFromCenter <= (radius + Constants.DETECT_THRESHOLD)))
+            Log.i("Disc", "Clicked on disc !");
 
     }
 }

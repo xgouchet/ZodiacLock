@@ -24,4 +24,7 @@ public class RenderContext {
     public int uniformDiffuseTexture = -1;
     public int uniformNormalTexture = -1;
 
+    public int uniformDiffuseColor = -1;
+    public int uniformSpecularColor = -1;
+
 }

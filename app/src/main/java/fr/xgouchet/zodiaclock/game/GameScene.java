@@ -63,13 +63,13 @@ public class GameScene extends EntityAggregator {
         ringsGroup.add(new Texture(R.drawable.debug, Texture.TYPE_DIFFUSE));
         ringsGroup.add(new Texture(R.drawable.sand_normal, Texture.TYPE_NORMAL));
 
-        innerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_INNER, 1.25f, 0.75f);
+        innerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_INNER, 1.25f);
         ringsGroup.add(innerRing);
 
-        middleRing = new InteractiveRing(bus, InteractiveRing.RING_ID_MIDDLE, 2.25f, 0.75f);
+        middleRing = new InteractiveRing(bus, InteractiveRing.RING_ID_MIDDLE, 2.25f);
         ringsGroup.add(middleRing);
 
-        outerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_OUTER, 3.25f, 0.75f);
+        outerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_OUTER, 3.25f);
         ringsGroup.add(outerRing);
 
         return ringsGroup;

@@ -8,8 +8,10 @@ import android.view.MotionEvent;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import fr.xgouchet.zodiaclock.R;
 import fr.xgouchet.zodiaclock.engine.GLException;
 import fr.xgouchet.zodiaclock.engine.entities.Entity;
+import fr.xgouchet.zodiaclock.engine.rendering.Material;
 import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
 import fr.xgouchet.zodiaclock.events.RingEvent;
@@ -48,6 +50,8 @@ public class InteractiveRing extends Entity {
     private final float outerRadius;
 
     @NonNull
+    private final Material material;
+    @NonNull
     private final Transform transform;
     @NonNull
     private final RingShape shape;
@@ -62,13 +66,14 @@ public class InteractiveRing extends Entity {
     private float snappedAngle = 0;
 
 
-    public InteractiveRing(@NonNull Bus bus, @RingId int id, float radius, float thickness) {
+    public InteractiveRing(@NonNull Bus bus, @RingId int id, float radius) {
         this.bus = bus;
-        this.innerRadius = radius - (thickness / 2.0f);
-        this.outerRadius = radius + (thickness / 2.0f);
+        this.innerRadius = radius - Constants.RING_HALF_THICKNESS;
+        this.outerRadius = radius + Constants.RING_HALF_THICKNESS;
 
+        material = new Material(R.color.gold_diff, R.color.gold_spec);
         transform = new Transform();
-        shape = new RingShape(radius, thickness, Constants.TEX_COORDS_SCALE);
+        shape = new RingShape(radius, Constants.RING_HALF_THICKNESS, Constants.TEX_COORDS_SCALE);
 
         ringEvent = new RingEvent(id);
 
@@ -78,6 +83,7 @@ public class InteractiveRing extends Entity {
 
     @Override
     public void onPrepare(@NonNull Context context) throws GLException {
+        material.onPrepare(context);
         transform.onPrepare(context);
         shape.onPrepare(context);
     }
@@ -109,6 +115,7 @@ public class InteractiveRing extends Entity {
         transform.setOrientation((float) cos(displayAngle), (float) sin(displayAngle), 0,
                 (float) -sin(displayAngle), (float) cos(displayAngle), 0);
 
+        material.onRender(renderContext);
         transform.onRender(renderContext);
         shape.onRender(renderContext);
     }

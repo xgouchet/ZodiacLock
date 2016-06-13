@@ -25,10 +25,10 @@ public class RingShape extends FixedShape {
     private final float outerRadius;
     private final float texCoordsScale;
 
-    public RingShape(float radius, float thickness, float texCoordsScale) {
+    public RingShape(float radius, float halfThickness, float texCoordsScale) {
         super(VERTICES_COUNT, VERTEX_SIZE, GLES20.GL_TRIANGLE_STRIP);
-        this.innerRadius = radius - (thickness / 2.0f);
-        this.outerRadius = radius + (thickness / 2.0f);
+        this.innerRadius = radius - halfThickness;
+        this.outerRadius = radius + halfThickness;
         this.texCoordsScale = texCoordsScale;
     }
 
