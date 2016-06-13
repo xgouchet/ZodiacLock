@@ -39,9 +39,9 @@ public class FlickeringLight extends EntityDecorator<Light> {
     protected void onDecoratedWillUpdate(long deltaNanos, long timeMs, @NonNull Light decorated) {
         double turnPerSeconds = (timeMs / 1000.0) * Math.PI * 2.0;
         decorated.translateTo(
-                (float) (50 + 2 * cos(0.25 * turnPerSeconds)),
-                (float) (-50 + 10 * sin(0.25 * turnPerSeconds)),
-                5);
+                (float) (-50 + 2 * cos(0.25 * turnPerSeconds)),
+                (float) (50 + 10 * sin(0.25 * turnPerSeconds)),
+                50);
     }
 
     @Override

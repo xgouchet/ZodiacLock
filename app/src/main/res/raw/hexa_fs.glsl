@@ -5,6 +5,7 @@ precision mediump float;
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_NormalTexture;
 uniform vec3 u_LightPos;
+uniform vec3 u_EyePos;
 
 uniform vec4 u_DiffuseColor;
 uniform vec4 u_SpecularColor;
@@ -32,8 +33,9 @@ void main(){
     float diffuse = max(dot(normalDir, lightDir), 0.5);
 
     // specular
-    vec3 halfVector = normalize(v_Position + lightDir);
-    float spec = pow (max (dot (halfVector, normalDir), 0.0), 1.5)  ;
+    vec3 eyeDir = normalize(u_EyePos - v_Position);
+    vec3 halfVector = normalize(eyeDir + lightDir);
+    float spec = pow (max (dot (halfVector, normalDir), 0.0), 10.0)  ;
 
     vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
     gl_FragColor = (diffuse * texture * u_DiffuseColor)

@@ -41,7 +41,7 @@ public class Shader extends Entity {
     private int programHandle;
 
     private int uniformModelMatrix, uniformMVPMatrix;
-    private int uniformLightPosition;
+    private int uniformLightPosition, uniformEyePosition;
     private int uniformDiffuseTexture, uniformNormalTexture;
     private int uniformDiffuseColor, uniformSpecularColor;
 
@@ -75,6 +75,8 @@ public class Shader extends Entity {
         uniformMVPMatrix = GLES20.glGetUniformLocation(programHandle, "u_MVPMatrix");
         checkGlError();
         uniformLightPosition = GLES20.glGetUniformLocation(programHandle, "u_LightPos");
+        checkGlError();
+        uniformEyePosition = GLES20.glGetUniformLocation(programHandle, "u_EyePos");
         checkGlError();
         uniformDiffuseTexture = GLES20.glGetUniformLocation(programHandle, "u_DiffuseTexture");
         checkGlError();
@@ -116,11 +118,10 @@ public class Shader extends Entity {
         checkGlError();
 
         // environment
-//        Log.v("Shader", "Update light position " + renderContext.uniformLightPosition
-//                + " → " + Arrays.toString(renderContext.vecLightPos));
         GLES20.glUniform3fv(renderContext.uniformLightPosition, 1, renderContext.vecLightPos, 0);
         checkGlError();
-
+        GLES20.glUniform3fv(renderContext.uniformEyePosition, 1, renderContext.vecEyePos, 0);
+        checkGlError();
 
         renderContext.attrVertexPosition = attrVertexPosition;
         renderContext.attrVertexTexCoords = attrVertexTexCoords;
@@ -128,6 +129,7 @@ public class Shader extends Entity {
         renderContext.uniformMVPMatrix = uniformMVPMatrix;
         renderContext.uniformModelMatrix = uniformModelMatrix;
 
+        renderContext.uniformEyePosition = uniformEyePosition;
         renderContext.uniformLightPosition = uniformLightPosition;
 
         renderContext.uniformDiffuseTexture = uniformDiffuseTexture;

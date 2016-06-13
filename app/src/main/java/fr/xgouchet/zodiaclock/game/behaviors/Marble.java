@@ -31,7 +31,7 @@ public class Marble extends Entity {
     public Marble(int step, float radius, DiscShape shape, @ColorRes int color) {
         transform = new Transform();
         float angle = step * Constants.STEP_ANGLE;
-        transform.translateTo((float) (cos(angle) * radius), (float) (sin(angle) * radius), 0);
+        transform.translateTo((float) (cos(angle) * radius), (float) (sin(angle) * radius), 0.15f);
         material = new Material(color, R.color.white);
         discShape = shape;
     }

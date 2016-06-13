@@ -20,6 +20,7 @@ public class RenderContext {
     public int uniformMVPMatrix = -1;
 
     public int uniformLightPosition = -1;
+    public int uniformEyePosition = -1;
 
     public int uniformDiffuseTexture = -1;
     public int uniformNormalTexture = -1;
