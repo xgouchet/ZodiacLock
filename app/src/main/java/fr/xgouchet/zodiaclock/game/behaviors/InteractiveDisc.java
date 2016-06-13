@@ -45,7 +45,7 @@ public class InteractiveDisc extends Entity {
         this.bus = bus;
         this.radius = radius;
 
-        material = new Material(R.color.blue, R.color.white);
+        material = new Material(R.color.white, R.color.gold_spec);
         transform = new Transform();
         shape = new DiscShape(radius, Constants.TEX_COORDS_SCALE);
 
@@ -66,6 +66,12 @@ public class InteractiveDisc extends Entity {
 
     @Override
     public void onUpdate(long deltaNanos, long timeMs) {
+        if (abs(snappedZ - displayZ) > .00001) {
+            displayZ = displayZ + ((snappedZ - displayZ) * .35f);
+            transform.translateTo(0, 0, displayZ);
+        }
+
+        transform.onUpdate(deltaNanos, timeMs);
     }
 
     @Override
@@ -75,10 +81,7 @@ public class InteractiveDisc extends Entity {
 
     @Override
     public void onRender(@NonNull RenderContext renderContext) throws GLException {
-        if (abs(snappedZ - displayZ) > .00001) {
-            displayZ = displayZ + ((snappedZ - displayZ) * .35f);
-            transform.translateTo(0, 0, displayZ);
-        }
+
 
         material.onRender(renderContext);
         transform.onRender(renderContext);

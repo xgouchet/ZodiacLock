@@ -14,6 +14,10 @@ public abstract class Entity {
 
     private boolean prepared;
 
+    public boolean isPrepared() {
+        return prepared;
+    }
+
     public final void prepare(@NonNull Context context) throws GLException {
         if (prepared) return;
 

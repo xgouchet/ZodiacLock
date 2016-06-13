@@ -29,11 +29,11 @@ void main(){
 
     // diffuse
     vec3 lightDir = normalize(u_LightPos - v_Position);
-    float diffuse = max(dot(normalDir, lightDir), 0.15);
+    float diffuse = max(dot(normalDir, lightDir), 0.5);
 
     // specular
     vec3 halfVector = normalize(v_Position + lightDir);
-    float spec = pow (max (dot (halfVector, normalDir), 0.0), 10.0)  ;
+    float spec = pow (max (dot (halfVector, normalDir), 0.0), 1.5)  ;
 
     vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
     gl_FragColor = (diffuse * texture * u_DiffuseColor)

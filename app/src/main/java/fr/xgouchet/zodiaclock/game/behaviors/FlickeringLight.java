@@ -41,7 +41,7 @@ public class FlickeringLight extends EntityDecorator<Light> {
         decorated.translateTo(
                 (float) (50 + 2 * cos(0.25 * turnPerSeconds)),
                 (float) (-50 + 10 * sin(0.25 * turnPerSeconds)),
-                50);
+                5);
     }
 
     @Override

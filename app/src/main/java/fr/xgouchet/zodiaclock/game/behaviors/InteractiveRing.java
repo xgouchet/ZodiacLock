@@ -36,35 +36,36 @@ public class InteractiveRing extends Entity {
 
     @IntDef({RING_ID_INNER, RING_ID_MIDDLE, RING_ID_OUTER})
     public @interface RingId {
+
     }
 
-
     private static final int SNAP_COUNT = 12;
+
+
     private static final double SNAP_ANGLE = Math.PI * 2.0 / SNAP_COUNT;
-
-
     @NonNull
     private final Bus bus;
 
-    private final float innerRadius;
-    private final float outerRadius;
 
+    private final float innerRadius;
+
+    private final float outerRadius;
     @NonNull
     private final Material material;
+
     @NonNull
     private final Transform transform;
     @NonNull
     private final RingShape shape;
-
     @NonNull
     private final RingEvent ringEvent;
 
     private boolean dragging;
+
     private float initialDragAngle;
     private float angle = 0;
     private float displayAngle = 0;
     private float snappedAngle = 0;
-
 
     public InteractiveRing(@NonNull Bus bus, @RingId int id, float radius) {
         this.bus = bus;
@@ -88,6 +89,7 @@ public class InteractiveRing extends Entity {
         shape.onPrepare(context);
     }
 
+
     @Override
     public boolean needsUpdate() {
         return true;
@@ -95,6 +97,16 @@ public class InteractiveRing extends Entity {
 
     @Override
     public void onUpdate(long deltaNanos, long timeMs) {
+        if (!dragging) {
+            if (abs(snappedAngle - angle) > .00001f) {
+                angle = angle + ((snappedAngle - angle) * .15f);
+            }
+            displayAngle = angle;
+        }
+
+        transform.setOrientation((float) cos(displayAngle), (float) sin(displayAngle), 0,
+                (float) -sin(displayAngle), (float) cos(displayAngle), 0);
+        transform.onUpdate(deltaNanos, timeMs);
     }
 
     @Override
@@ -105,21 +117,10 @@ public class InteractiveRing extends Entity {
     @Override
     public void onRender(@NonNull RenderContext renderContext) throws GLException {
 
-        if (!dragging) {
-            if (abs(snappedAngle - angle) > .00001f) {
-                angle = angle + ((snappedAngle - angle) * .15f);
-            }
-            displayAngle = angle;
-        }
-
-        transform.setOrientation((float) cos(displayAngle), (float) sin(displayAngle), 0,
-                (float) -sin(displayAngle), (float) cos(displayAngle), 0);
-
         material.onRender(renderContext);
         transform.onRender(renderContext);
         shape.onRender(renderContext);
     }
-
 
     @Subscribe
     public void onTouchEvent(TouchEvent event) {
@@ -135,6 +136,7 @@ public class InteractiveRing extends Entity {
                 break;
         }
     }
+
 
     private void onTouchDown(float[] position) {
         double distFromCenter = sqrt(
@@ -155,7 +157,6 @@ public class InteractiveRing extends Entity {
         displayAngle = angle + angleDelta;
     }
 
-
     private void onTouchUp() {
         if (!dragging) return;
 
@@ -171,5 +172,11 @@ public class InteractiveRing extends Entity {
         }
 
         dragging = false;
+    }
+
+
+    @NonNull
+    public Transform getTransform() {
+        return transform;
     }
 }

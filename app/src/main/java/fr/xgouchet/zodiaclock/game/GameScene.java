@@ -12,11 +12,10 @@ import fr.xgouchet.zodiaclock.engine.environment.Camera;
 import fr.xgouchet.zodiaclock.engine.environment.Light;
 import fr.xgouchet.zodiaclock.engine.rendering.Shader;
 import fr.xgouchet.zodiaclock.engine.rendering.Texture;
-import fr.xgouchet.zodiaclock.engine.rendering.Transform;
 import fr.xgouchet.zodiaclock.game.behaviors.FlickeringLight;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveDisc;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveRing;
-import fr.xgouchet.zodiaclock.game.shapes.DiscShape;
+import fr.xgouchet.zodiaclock.game.behaviors.Marbles;
 
 /**
  * @author Xavier Gouchet
@@ -36,6 +35,9 @@ public class GameScene extends EntityAggregator {
 
         add(createRings());
         add(createCentralButton());
+
+        add(createMarbles());
+
     }
 
     private Entity createBackgtround() {
@@ -77,6 +79,10 @@ public class GameScene extends EntityAggregator {
 
     private Entity createCentralButton() {
         return new InteractiveDisc(bus, 0.65f);
+    }
+
+    private Entity createMarbles() {
+        return new Marbles(innerRing.getTransform(), middleRing.getTransform(), outerRing.getTransform());
     }
 
 
