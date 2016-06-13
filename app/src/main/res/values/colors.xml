@@ -2,7 +2,7 @@
 <resources>
 
     <color name="white">#FFFFFF</color>
-    <color name="gold_diff">#C08000</color>
+    <color name="gold_diff">#FFE080</color>
     <color name="gold_spec">#FFC000</color>
     <color name="blue">#4080F0</color>
 </resources>

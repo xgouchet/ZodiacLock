@@ -60,8 +60,8 @@ public class GameScene extends EntityAggregator {
         EntityAggregator ringsGroup = new EntityAggregator();
 
         ringsGroup.add(new Shader(R.raw.hexa_vs, R.raw.hexa_fs));
-        ringsGroup.add(new Texture(R.drawable.debug, Texture.TYPE_DIFFUSE));
-        ringsGroup.add(new Texture(R.drawable.sand_normal, Texture.TYPE_NORMAL));
+        ringsGroup.add(new Texture(R.drawable.rings_color, Texture.TYPE_DIFFUSE));
+        ringsGroup.add(new Texture(R.drawable.flat_normal, Texture.TYPE_NORMAL));
 
         innerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_INNER, 1.25f);
         ringsGroup.add(innerRing);
