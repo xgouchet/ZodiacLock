@@ -20,9 +20,9 @@ void main() {
     v_TexCoords = a_TexCoords;
 
     v_Position = (u_ModelMatrix * a_Position).xyz;
-    v_Normal = (u_ModelMatrix * vec4(0.0, 0.0, 1.0, 0.0)).xyz;
-    v_Tangent = (u_ModelMatrix * vec4(-1.0, 0.0, 0.0, 0.0)).xyz;
+    v_Tangent = (u_ModelMatrix * vec4(1.0, 0.0, 0.0, 0.0)).xyz;
     v_Binorm = (u_ModelMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz;
+    v_Normal = (u_ModelMatrix * vec4(0.0, 0.0, 1.0, 0.0)).xyz;
 
 
     gl_Position = u_MVPMatrix * a_Position;

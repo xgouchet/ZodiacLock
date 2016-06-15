@@ -21,12 +21,10 @@ void main(){
     // Normal map deform
     vec3 normalDeform = normalize((texture2D(u_NormalTexture, v_TexCoords).rgb * 2.0) - 1.0);
     vec3 normalDir = vec3(
-                            (v_Tangent.x * normalDeform.x) + (v_Tangent.y * normalDeform.y) + (v_Tangent.z * normalDeform.z),
-                            (v_Binorm.x * normalDeform.x) + (v_Binorm.y * normalDeform.y) + (v_Binorm.z * normalDeform.z),
-                            (v_Normal.x * normalDeform.x) + (v_Normal.y * normalDeform.y) + (v_Normal.z * normalDeform.z)
+                            (v_Tangent.x * normalDeform.x) + (v_Binorm.x * normalDeform.y) + (v_Normal.x * normalDeform.z),
+                            (v_Tangent.y * normalDeform.x) + (v_Binorm.y * normalDeform.y) + (v_Normal.y * normalDeform.z),
+                            (v_Tangent.z * normalDeform.x) + (v_Binorm.z * normalDeform.y) + (v_Normal.z * normalDeform.z)
                             );
-
-//    vec3 normalDir = v_Normal ;
 
     // diffuse
     vec3 lightDir = normalize(u_LightPos - v_Position);
@@ -35,9 +33,10 @@ void main(){
     // specular
     vec3 eyeDir = normalize(u_EyePos - v_Position);
     vec3 halfVector = normalize(eyeDir + lightDir);
-    float spec = pow (max (dot (halfVector, normalDir), 0.0), 10.0)  ;
+    float spec = pow (max (dot (halfVector, normalDir), 0.0), 50.0)  ;
 
     vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
     gl_FragColor = (diffuse * texture * u_DiffuseColor)
                     + (spec * u_SpecularColor);
+//    gl_FragColor = vec4(normalDir, 1);
 }
