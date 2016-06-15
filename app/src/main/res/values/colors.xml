@@ -4,5 +4,21 @@
     <color name="white">#FFFFFF</color>
     <color name="gold_diff">#FFE080</color>
     <color name="gold_spec">#FFC000</color>
-    <color name="blue">#4080F0</color>
+
+
+    <color name="marble_0_red">#FF0000</color>
+    <color name="marble_1_orange">#FF8000</color>
+    <color name="marble_2_yellow">#FFFF00</color>
+    <color name="marble_3_lime">#80FF00</color>
+
+    <color name="marble_4_green">#00FF00</color>
+    <color name="marble_5_teal">#00FF80</color>
+    <color name="marble_6_turquoise">#00FFFF</color>
+    <color name="marble_7_azure">#0080FF</color>
+
+    <color name="marble_8_blue">#0000FF</color>
+    <color name="marble_9_violet">#8000FF</color>
+    <color name="marble_10_pink">#FF00FF</color>
+    <color name="marble_11_chartreuse">#FF0080</color>
+
 </resources>

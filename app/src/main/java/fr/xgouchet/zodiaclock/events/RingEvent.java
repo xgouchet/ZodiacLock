@@ -1,31 +1,35 @@
 package fr.xgouchet.zodiaclock.events;
 
-import fr.xgouchet.zodiaclock.game.behaviors.InteractiveRing;
+import android.support.annotation.IntRange;
+
+import fr.xgouchet.zodiaclock.game.behaviors.Constants;
 
 /**
  * @author Xavier Gouchet
  */
 public class RingEvent {
 
-    @InteractiveRing.RingId
+    @Constants.RingId
     private final int ringId;
 
-    private float displayAngle;
+    @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
+    private int snapped;
 
-    public RingEvent(@InteractiveRing.RingId int ringId) {
+    public RingEvent(@Constants.RingId int ringId) {
         this.ringId = ringId;
     }
 
-    public float getDisplayAngle() {
-        return displayAngle;
-    }
-
-    public void setDisplayAngle(float displayAngle) {
-        this.displayAngle = displayAngle;
-    }
-
-    @InteractiveRing.RingId
+    @Constants.RingId
     public int getRingId() {
         return ringId;
+    }
+
+    public void setSnapped(@IntRange(from = 0, to = Constants.STEP_COUNT - 1) int snapped) {
+        this.snapped = snapped;
+    }
+
+    @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
+    public int getSnapped() {
+        return snapped;
     }
 }

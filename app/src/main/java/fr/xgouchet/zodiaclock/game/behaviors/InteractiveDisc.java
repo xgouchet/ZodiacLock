@@ -14,6 +14,7 @@ import fr.xgouchet.zodiaclock.engine.entities.Entity;
 import fr.xgouchet.zodiaclock.engine.rendering.Material;
 import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
+import fr.xgouchet.zodiaclock.events.SwapMarblesEvent;
 import fr.xgouchet.zodiaclock.events.TouchEvent;
 import fr.xgouchet.zodiaclock.game.shapes.DiscShape;
 
@@ -40,6 +41,8 @@ public class InteractiveDisc extends Entity {
 
     private float snappedZ, displayZ;
 
+    @NonNull
+    private final SwapMarblesEvent swapMarblesEvent = new SwapMarblesEvent();
 
     public InteractiveDisc(@NonNull Bus bus, float radius) {
         this.bus = bus;
@@ -139,8 +142,10 @@ public class InteractiveDisc extends Entity {
                         + (position[1] * position[1])
                         + (position[2] * position[2]));
 
-        if ((distFromCenter <= (radius + Constants.DETECT_THRESHOLD)))
+        if ((distFromCenter <= (radius + Constants.DETECT_THRESHOLD))) {
             Log.i("Disc", "Clicked on disc !");
+            bus.post(swapMarblesEvent);
+        }
 
     }
 }

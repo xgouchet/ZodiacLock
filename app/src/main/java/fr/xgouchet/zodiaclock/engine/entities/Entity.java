@@ -34,4 +34,5 @@ public abstract class Entity {
     public abstract boolean needsRender();
 
     public abstract void onRender(@NonNull RenderContext renderContext) throws GLException;
+
 }

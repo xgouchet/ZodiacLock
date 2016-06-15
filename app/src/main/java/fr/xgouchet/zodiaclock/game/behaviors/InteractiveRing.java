@@ -1,7 +1,6 @@
 package fr.xgouchet.zodiaclock.game.behaviors;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 
@@ -30,19 +29,6 @@ import static java.lang.Math.sqrt;
  */
 public class InteractiveRing extends Entity {
 
-    public static final int RING_ID_INNER = 0;
-    public static final int RING_ID_MIDDLE = 1;
-    public static final int RING_ID_OUTER = 2;
-
-    @IntDef({RING_ID_INNER, RING_ID_MIDDLE, RING_ID_OUTER})
-    public @interface RingId {
-
-    }
-
-    private static final int SNAP_COUNT = 12;
-
-
-    private static final double SNAP_ANGLE = Math.PI * 2.0 / SNAP_COUNT;
     @NonNull
     private final Bus bus;
 
@@ -67,7 +53,7 @@ public class InteractiveRing extends Entity {
     private float displayAngle = 0;
     private float snappedAngle = 0;
 
-    public InteractiveRing(@NonNull Bus bus, @RingId int id, float radius) {
+    public InteractiveRing(@NonNull Bus bus, @Constants.RingId int id, float radius) {
         this.bus = bus;
         this.innerRadius = radius - Constants.RING_HALF_THICKNESS;
         this.outerRadius = radius + Constants.RING_HALF_THICKNESS;
@@ -98,7 +84,7 @@ public class InteractiveRing extends Entity {
     @Override
     public void onUpdate(long deltaNanos, long timeMs) {
         if (!dragging) {
-            if (abs(snappedAngle - angle) > .00001f) {
+            if (abs(snappedAngle - angle) > .000001f) {
                 angle = angle + ((snappedAngle - angle) * .15f);
             }
             displayAngle = angle;
@@ -160,8 +146,9 @@ public class InteractiveRing extends Entity {
     private void onTouchUp() {
         if (!dragging) return;
 
-        int snapped = (int) (round(displayAngle / SNAP_ANGLE) + SNAP_COUNT);
-        snappedAngle = (float) ((snapped % SNAP_COUNT) * SNAP_ANGLE);
+        int snapped = (int) (round(displayAngle / Constants.STEP_ANGLE) + Constants.STEP_COUNT);
+        snapped = snapped % Constants.STEP_COUNT;
+        snappedAngle = (float) (snapped * Constants.STEP_ANGLE);
         angle = displayAngle;
 
         while (snappedAngle - angle > Math.PI) {
@@ -172,6 +159,9 @@ public class InteractiveRing extends Entity {
         }
 
         dragging = false;
+
+        ringEvent.setSnapped(snapped);
+        bus.post(ringEvent);
     }
 
 

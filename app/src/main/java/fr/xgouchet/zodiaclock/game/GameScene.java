@@ -12,6 +12,8 @@ import fr.xgouchet.zodiaclock.engine.environment.Camera;
 import fr.xgouchet.zodiaclock.engine.environment.Light;
 import fr.xgouchet.zodiaclock.engine.rendering.Shader;
 import fr.xgouchet.zodiaclock.engine.rendering.Texture;
+import fr.xgouchet.zodiaclock.engine.rendering.Transform;
+import fr.xgouchet.zodiaclock.game.behaviors.Constants;
 import fr.xgouchet.zodiaclock.game.behaviors.FlickeringLight;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveDisc;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveRing;
@@ -26,6 +28,8 @@ public class GameScene extends EntityAggregator {
     private final Bus bus;
 
     private InteractiveRing innerRing, middleRing, outerRing;
+
+    private final int[] swapAngles = new int[]{5, 6, 7};
 
     public GameScene(@NonNull Bus bus) {
         this.bus = bus;
@@ -65,13 +69,13 @@ public class GameScene extends EntityAggregator {
         ringsGroup.add(new Texture(R.drawable.rings_color, Texture.TYPE_DIFFUSE));
         ringsGroup.add(new Texture(R.drawable.flat_normal, Texture.TYPE_NORMAL));
 
-        innerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_INNER, 1.25f);
+        innerRing = new InteractiveRing(bus, Constants.RING_ID_INNER, 1.25f);
         ringsGroup.add(innerRing);
 
-        middleRing = new InteractiveRing(bus, InteractiveRing.RING_ID_MIDDLE, 2.25f);
+        middleRing = new InteractiveRing(bus, Constants.RING_ID_MIDDLE, 2.25f);
         ringsGroup.add(middleRing);
 
-        outerRing = new InteractiveRing(bus, InteractiveRing.RING_ID_OUTER, 3.25f);
+        outerRing = new InteractiveRing(bus, Constants.RING_ID_OUTER, 3.25f);
         ringsGroup.add(outerRing);
 
         return ringsGroup;
@@ -82,7 +86,10 @@ public class GameScene extends EntityAggregator {
     }
 
     private Entity createMarbles() {
-        return new Marbles(innerRing.getTransform(), middleRing.getTransform(), outerRing.getTransform());
+
+        return new Marbles(bus,
+                swapAngles,
+                new Transform[]{innerRing.getTransform(), middleRing.getTransform(), outerRing.getTransform()});
     }
 
 

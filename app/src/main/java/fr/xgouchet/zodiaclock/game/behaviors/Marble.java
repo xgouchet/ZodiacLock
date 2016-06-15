@@ -1,7 +1,7 @@
 package fr.xgouchet.zodiaclock.game.behaviors;
 
 import android.content.Context;
-import android.support.annotation.ColorRes;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -13,6 +13,7 @@ import fr.xgouchet.zodiaclock.engine.rendering.RenderContext;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
 import fr.xgouchet.zodiaclock.game.shapes.DiscShape;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -28,14 +29,28 @@ public class Marble extends Entity {
     @NonNull
     private final DiscShape discShape;
 
-    public Marble(int step, float radius, DiscShape shape, @ColorRes int color) {
+    @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
+    private int stepAngle;
+    @Constants.RingId
+    private int ringId;
+
+    private float radius, snappedRadius, angle;
+
+    public Marble(@Constants.RingId int ringId, @IntRange(from = 0, to = Constants.STEP_COUNT - 1) int stepAngle, @NonNull DiscShape shape) {
+        this.stepAngle = stepAngle;
+        this.ringId = ringId;
+
+        snappedRadius = radius = Constants.getRingRadius(ringId);
+        angle = stepAngle * Constants.STEP_ANGLE;
         transform = new Transform();
-        float angle = step * Constants.STEP_ANGLE;
-        transform.translateTo((float) (cos(angle) * radius), (float) (sin(angle) * radius), 0.15f);
-        material = new Material(color, R.color.white);
+        transform.translateTo((float) (cos(angle) * radius), (float) (sin(angle) * radius), 0.05f);
+
+        material = new Material(Constants.getColor(stepAngle), R.color.white);
+
         discShape = shape;
     }
 
+    //region Entity
     @Override
     public void onPrepare(@NonNull Context context) throws GLException {
         transform.onPrepare(context);
@@ -52,6 +67,10 @@ public class Marble extends Entity {
 
     @Override
     public void onUpdate(long deltaNanos, long timeMs) {
+        if (abs(radius - snappedRadius) > 0.0001f) {
+            radius = radius + ((snappedRadius - radius) * .15f);
+            transform.translateTo((float) (cos(angle) * radius), (float) (sin(angle) * radius), 0.05f);
+        }
         transform.onUpdate(deltaNanos, timeMs);
     }
 
@@ -62,6 +81,8 @@ public class Marble extends Entity {
 
     @Override
     public void onRender(@NonNull RenderContext renderContext) throws GLException {
+
+
         material.onRender(renderContext);
         transform.onRender(renderContext);
         discShape.onRender(renderContext);
@@ -69,5 +90,27 @@ public class Marble extends Entity {
 
     public void setParentTransform(@Nullable Transform parent) {
         this.transform.setParent(parent);
+    }
+    //endregion
+
+    @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
+    public int getStepAngle() {
+        return stepAngle;
+    }
+
+    @Constants.RingId
+    public int getRingId() {
+        return ringId;
+    }
+
+    public void swap(@Constants.RingId int ringId,
+                     @IntRange(from = 0, to = Constants.STEP_COUNT - 1) int stepAngle) {
+        radius = Constants.getRingRadius(this.ringId);
+        snappedRadius = Constants.getRingRadius(ringId);
+        angle = stepAngle * Constants.STEP_ANGLE;
+        transform.translateTo((float) (cos(angle) * radius), (float) (sin(angle) * radius), 0.05f);
+
+        this.stepAngle = stepAngle;
+        this.ringId = ringId;
     }
 }
