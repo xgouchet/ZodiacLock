@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import fr.xgouchet.zodiaclock.engine.entities.Entity;
 import fr.xgouchet.zodiaclock.engine.GLException;
+import fr.xgouchet.zodiaclock.engine.entities.Entity;
 
 import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 
@@ -17,7 +17,7 @@ import static fr.xgouchet.zodiaclock.engine.GLException.checkGlError;
 /**
  * @author Xavier Gouchet
  */
-public abstract class FixedShape extends Entity {
+public abstract class GeneratedShape extends Entity {
 
     public static final int BYTES_PER_FLOAT = Float.SIZE / Byte.SIZE;
 
@@ -27,8 +27,13 @@ public abstract class FixedShape extends Entity {
     private final int renderMode;
     private FloatBuffer verticesBuffer;
 
-    public FixedShape(int verticesCount, int vertexSize, int renderMode) {
-
+    /**
+     * @param verticesCount the number of vertices in the shape
+     * @param vertexSize    the size of each vertex (that is, the number of float components in each vertex)
+     * @param renderMode    the mode to use when rendering the shape (GL_POINTS, GL_LINE_STRIP,
+     *                      GL_LINE_LOOP, GL_LINES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES)
+     */
+    public GeneratedShape(int verticesCount, int vertexSize, int renderMode) {
         this.verticesCount = verticesCount;
         this.vertexSize = vertexSize;
         this.vertexStrideBytes = vertexSize * BYTES_PER_FLOAT;

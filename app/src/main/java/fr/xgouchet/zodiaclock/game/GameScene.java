@@ -10,6 +10,7 @@ import fr.xgouchet.zodiaclock.engine.entities.EntityAggregator;
 import fr.xgouchet.zodiaclock.engine.environment.Background;
 import fr.xgouchet.zodiaclock.engine.environment.Camera;
 import fr.xgouchet.zodiaclock.engine.environment.Light;
+import fr.xgouchet.zodiaclock.engine.rendering.Material;
 import fr.xgouchet.zodiaclock.engine.rendering.Shader;
 import fr.xgouchet.zodiaclock.engine.rendering.Texture;
 import fr.xgouchet.zodiaclock.engine.rendering.Transform;
@@ -18,6 +19,10 @@ import fr.xgouchet.zodiaclock.game.behaviors.FlickeringLight;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveDisc;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveRing;
 import fr.xgouchet.zodiaclock.game.behaviors.Marbles;
+import fr.xgouchet.zodiaclock.game.shapes.GuideShape;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 /**
  * @author Xavier Gouchet
@@ -29,7 +34,9 @@ public class GameScene extends EntityAggregator {
 
     private InteractiveRing innerRing, middleRing, outerRing;
 
+    @NonNull
     private final int[] swapAngles = new int[]{5, 6, 7};
+    private final int gap = 2;
 
     public GameScene(@NonNull Bus bus) {
         this.bus = bus;
@@ -42,6 +49,7 @@ public class GameScene extends EntityAggregator {
 
         add(createMarbles());
 
+        add(createGuides());
     }
 
     private Entity createBackgtround() {
@@ -87,10 +95,43 @@ public class GameScene extends EntityAggregator {
 
     private Entity createMarbles() {
 
-        return new Marbles(bus,
+        final Marbles marbles = new Marbles(bus,
                 swapAngles,
-                new Transform[]{innerRing.getTransform(), middleRing.getTransform(), outerRing.getTransform()});
+                new Transform[]{
+                        innerRing.getTransform(),
+                        middleRing.getTransform(),
+                        outerRing.getTransform()},
+                gap);
+        marbles.scramble();
+        return marbles;
     }
 
+    private Entity createGuides() {
+        EntityAggregator group = new EntityAggregator();
+
+        group.add(new Shader(R.raw.hexa_vs, R.raw.hexa_fs));
+        group.add(new Texture(R.drawable.rings_color, Texture.TYPE_DIFFUSE));
+        group.add(new Texture(R.drawable.sand_normal, Texture.TYPE_NORMAL));
+
+        GuideShape shape = new GuideShape();
+
+        for (int swapAngle : swapAngles) {
+            float angle = swapAngle * Constants.STEP_ANGLE;
+            EntityAggregator guide = new EntityAggregator();
+
+            Transform transform = new Transform();
+            transform.translateTo(0, 0, -0.25f);
+            transform.setOrientation(
+                    (float) cos(angle), (float) sin(angle), 0,
+                    (float) -sin(angle), (float) cos(angle), 0);
+
+            guide.add(new Material(R.color.gold_diff, R.color.gold_spec));
+            guide.add(transform);
+            guide.add(shape);
+            group.add(guide);
+        }
+
+        return group;
+    }
 
 }

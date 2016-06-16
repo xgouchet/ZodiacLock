@@ -52,6 +52,8 @@ public class Constants {
     };
 
 
+    public static final float GUIDE_LENGTH = 4.5f;
+
     public static float getRingRadius(@Constants.RingId int ringId) {
         switch (ringId) {
             case Constants.RING_ID_INNER:

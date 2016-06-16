@@ -1,13 +1,16 @@
 package fr.xgouchet.zodiaclock.game.behaviors;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import fr.xgouchet.zodiaclock.R;
 import fr.xgouchet.zodiaclock.engine.GLException;
@@ -34,7 +37,10 @@ public class Marbles extends Entity {
     private final Transform[] ringTransforms;
 
 
-    public Marbles(@NonNull Bus bus, int[] swapAngles, @NonNull Transform[] ringTransforms) {
+    public Marbles(@NonNull Bus bus,
+                   @NonNull int[] swapAngles,
+                   @NonNull Transform[] ringTransforms,
+                   @IntRange(from = 1, to = Constants.STEP_COUNT) int gap) {
         this.swapAngles = swapAngles;
         this.ringTransforms = ringTransforms;
 
@@ -44,16 +50,18 @@ public class Marbles extends Entity {
 
         DiscShape shape = new DiscShape(Constants.MARBLE_RADIUS, .75f / Constants.MARBLE_RADIUS);
 
-        generateRing(shape, Constants.RING_ID_INNER);
-        generateRing(shape, Constants.RING_ID_MIDDLE);
-        generateRing(shape, Constants.RING_ID_OUTER);
+        generateRing(shape, Constants.RING_ID_INNER, gap);
+        generateRing(shape, Constants.RING_ID_MIDDLE, gap);
+        generateRing(shape, Constants.RING_ID_OUTER, gap);
 
         bus.register(this);
 
     }
 
-    private void generateRing(DiscShape shape, @Constants.RingId int ringId) {
-        for (int step = 0; step < 12; step += 2) {
+    private void generateRing(@NonNull DiscShape shape,
+                              @Constants.RingId int ringId,
+                              @IntRange(from = 1, to = Constants.STEP_COUNT) int gap) {
+        for (int step = 0; step < 12; step += gap) {
             Marble marble = new Marble(ringId, step, shape);
             marble.setParentTransform(ringTransforms[ringId]);
             entities.add(marble);
@@ -99,6 +107,11 @@ public class Marbles extends Entity {
         }
     }
 
+    @Subscribe
+    public void onRingEvent(@NonNull RingEvent event) {
+        ringAngles[event.getRingId()] = event.getSnapped();
+    }
+
     private boolean isSwapAngle(int stepAngle) {
         for (int swapAngle : swapAngles) {
             if (swapAngle == stepAngle) return true;
@@ -114,9 +127,17 @@ public class Marbles extends Entity {
         marble.setParentTransform(ringTransforms[nextRing]);
     }
 
-    @Subscribe
-    public void onRingEvent(@NonNull RingEvent event) {
-        ringAngles[event.getRingId()] = event.getSnapped();
-    }
+    public void scramble() {
+        Random rand = new Random();
+        SwapMarblesEvent event = new SwapMarblesEvent();
+        for (int i = 0; i < 20; ++i){
+            int ring = rand.nextInt(3);
+            int offset = rand.nextInt(Constants.STEP_COUNT);
+            ringAngles[ring] = (ringAngles[ring] + offset) % Constants.STEP_COUNT;
+            onSwapEvent(event);
+            onSwapEvent(event);
+        }
 
+        Arrays.fill(ringAngles, 0);
+    }
 }

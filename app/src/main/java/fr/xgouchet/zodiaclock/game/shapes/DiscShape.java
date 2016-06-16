@@ -2,7 +2,7 @@ package fr.xgouchet.zodiaclock.game.shapes;
 
 import android.opengl.GLES20;
 
-import fr.xgouchet.zodiaclock.engine.rendering.FixedShape;
+import fr.xgouchet.zodiaclock.engine.rendering.GeneratedShape;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -10,7 +10,7 @@ import static java.lang.Math.sin;
 /**
  * @author Xavier Gouchet
  */
-public class DiscShape extends FixedShape {
+public class DiscShape extends GeneratedShape {
 
     public static final int STEPS = 48;
     public static final float ANGLE_STEP = (float) ((Math.PI * 2) / (STEPS - 1));
