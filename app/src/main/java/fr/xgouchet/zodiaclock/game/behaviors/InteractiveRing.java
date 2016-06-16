@@ -102,7 +102,7 @@ public class InteractiveRing extends Entity {
 
     @Override
     public void onRender(@NonNull RenderContext renderContext) throws GLException {
-
+        material.setEmissive(dragging);
         material.onRender(renderContext);
         transform.onRender(renderContext);
         shape.onRender(renderContext);

@@ -27,5 +27,6 @@ public class RenderContext {
 
     public int uniformDiffuseColor = -1;
     public int uniformSpecularColor = -1;
+    public int uniformEmissiveColor = -1;
 
 }

@@ -30,6 +30,8 @@ public class Marble extends Entity {
     private final DiscShape discShape;
 
     @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
+    private final int originalStepAngle;
+    @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
     private int stepAngle;
     @Constants.RingId
     private int ringId;
@@ -39,6 +41,7 @@ public class Marble extends Entity {
     public Marble(@Constants.RingId int ringId, @IntRange(from = 0, to = Constants.STEP_COUNT - 1) int stepAngle, @NonNull DiscShape shape) {
         this.stepAngle = stepAngle;
         this.ringId = ringId;
+        originalStepAngle = stepAngle;
 
         snappedRadius = radius = Constants.getRingRadius(ringId);
         angle = stepAngle * Constants.STEP_ANGLE;
@@ -98,6 +101,11 @@ public class Marble extends Entity {
         return stepAngle;
     }
 
+    @IntRange(from = 0, to = Constants.STEP_COUNT - 1)
+    public int getOriginalStepAngle() {
+        return originalStepAngle;
+    }
+
     @Constants.RingId
     public int getRingId() {
         return ringId;
@@ -112,5 +120,9 @@ public class Marble extends Entity {
 
         this.stepAngle = stepAngle;
         this.ringId = ringId;
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        material.setEmissive(highlighted);
     }
 }

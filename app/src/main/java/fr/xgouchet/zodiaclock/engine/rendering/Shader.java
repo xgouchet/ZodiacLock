@@ -43,7 +43,7 @@ public class Shader extends Entity {
     private int uniformModelMatrix, uniformMVPMatrix;
     private int uniformLightPosition, uniformEyePosition;
     private int uniformDiffuseTexture, uniformNormalTexture;
-    private int uniformDiffuseColor, uniformSpecularColor;
+    private int uniformDiffuseColor, uniformSpecularColor, uniformEmissiveColor;
 
     private int attrVertexPosition;
     private int attrVertexTexCoords;
@@ -86,6 +86,8 @@ public class Shader extends Entity {
         uniformDiffuseColor = GLES20.glGetUniformLocation(programHandle, "u_DiffuseColor");
         checkGlError();
         uniformSpecularColor = GLES20.glGetUniformLocation(programHandle, "u_SpecularColor");
+        checkGlError();
+        uniformEmissiveColor = GLES20.glGetUniformLocation(programHandle, "u_EmissiveColor");
         checkGlError();
 
         attrVertexPosition = GLES20.glGetAttribLocation(programHandle, "a_Position");
@@ -137,6 +139,7 @@ public class Shader extends Entity {
 
         renderContext.uniformDiffuseColor = uniformDiffuseColor;
         renderContext.uniformSpecularColor = uniformSpecularColor;
+        renderContext.uniformEmissiveColor = uniformEmissiveColor;
     }
 
     private int prepareShader(Context context, @ShaderType int type, @RawRes int id) throws GLException {

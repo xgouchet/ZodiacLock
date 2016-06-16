@@ -9,6 +9,7 @@ uniform vec3 u_EyePos;
 
 uniform vec4 u_DiffuseColor;
 uniform vec4 u_SpecularColor;
+uniform vec4 u_EmissiveColor;
 
 // per fragment input
 varying vec3 v_Position;
@@ -36,7 +37,7 @@ void main(){
     float spec = pow (max (dot (halfVector, normalDir), 0.0), 50.0)  ;
 
     vec4 texture = texture2D(u_DiffuseTexture, v_TexCoords);
-    gl_FragColor = (diffuse * texture * u_DiffuseColor)
+    gl_FragColor = (((diffuse * u_DiffuseColor) + (u_EmissiveColor / 2.0)) * texture)
                     + (spec * u_SpecularColor);
 //    gl_FragColor = vec4(normalDir, 1);
 }

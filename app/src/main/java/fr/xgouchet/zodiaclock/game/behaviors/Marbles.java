@@ -83,6 +83,11 @@ public class Marbles extends Entity {
 
     @Override
     public void onUpdate(long deltaNanos, long timeMs) {
+        for (Marble marble : marbles) {
+            int stepAngle = (marble.getStepAngle() + ringAngles[marble.getRingId()]) % Constants.STEP_COUNT;
+            marble.setHighlighted(stepAngle == marble.getOriginalStepAngle());
+        }
+
         entities.onUpdate(deltaNanos, timeMs);
     }
 
@@ -130,7 +135,7 @@ public class Marbles extends Entity {
     public void scramble() {
         Random rand = new Random();
         SwapMarblesEvent event = new SwapMarblesEvent();
-        for (int i = 0; i < 20; ++i){
+        for (int i = 0; i < 20; ++i) {
             int ring = rand.nextInt(3);
             int offset = rand.nextInt(Constants.STEP_COUNT);
             ringAngles[ring] = (ringAngles[ring] + offset) % Constants.STEP_COUNT;

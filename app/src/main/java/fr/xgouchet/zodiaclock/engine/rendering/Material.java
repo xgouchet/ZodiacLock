@@ -8,6 +8,8 @@ import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 
+import java.util.Arrays;
+
 import fr.xgouchet.zodiaclock.engine.GLException;
 import fr.xgouchet.zodiaclock.engine.entities.Entity;
 
@@ -18,6 +20,7 @@ public class Material extends Entity {
 
     private final float[] diffuseColor;
     private final float[] specularColor;
+    private final float[] emissiveColor;
 
     @ColorRes
     private final int diffuseColorId, specularColorId;
@@ -29,6 +32,7 @@ public class Material extends Entity {
 
         diffuseColor = new float[4];
         specularColor = new float[4];
+        emissiveColor = new float[4];
     }
 
     @Override
@@ -61,6 +65,9 @@ public class Material extends Entity {
         if (renderContext.uniformSpecularColor >= 0) {
             GLES20.glUniform4fv(renderContext.uniformSpecularColor, 1, specularColor, 0);
         }
+        if (renderContext.uniformEmissiveColor >= 0) {
+            GLES20.glUniform4fv(renderContext.uniformEmissiveColor, 1, emissiveColor, 0);
+        }
     }
 
     private void fillColor(@NonNull Resources res, @ColorRes int colorId, @NonNull float[] colorArray, float scale) {
@@ -75,5 +82,13 @@ public class Material extends Entity {
         colorArray[1] = Color.green(color) * scale / 255.0f;
         colorArray[2] = Color.blue(color) * scale / 255.0f;
         colorArray[3] = Color.alpha(color) * scale / 255.0f;
+    }
+
+    public void setEmissive(boolean enable) {
+        if (enable) {
+            System.arraycopy(diffuseColor, 0, emissiveColor, 0, 4);
+        } else {
+            Arrays.fill(emissiveColor, 0);
+        }
     }
 }
