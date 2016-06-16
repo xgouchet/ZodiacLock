@@ -20,6 +20,7 @@ import fr.xgouchet.zodiaclock.game.behaviors.InteractiveDisc;
 import fr.xgouchet.zodiaclock.game.behaviors.InteractiveRing;
 import fr.xgouchet.zodiaclock.game.behaviors.Marbles;
 import fr.xgouchet.zodiaclock.game.shapes.GuideShape;
+import fr.xgouchet.zodiaclock.game.shapes.LockShape;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -50,6 +51,7 @@ public class GameScene extends EntityAggregator {
         add(createMarbles());
 
         add(createGuides());
+        add(createLocks());
     }
 
     private Entity createBackgtround() {
@@ -77,20 +79,20 @@ public class GameScene extends EntityAggregator {
         ringsGroup.add(new Texture(R.drawable.rings_color, Texture.TYPE_DIFFUSE));
         ringsGroup.add(new Texture(R.drawable.flat_normal, Texture.TYPE_NORMAL));
 
-        innerRing = new InteractiveRing(bus, Constants.RING_ID_INNER, 1.25f);
+        innerRing = new InteractiveRing(bus, Constants.RING_ID_INNER, Constants.RING_RADIUS_INNER);
         ringsGroup.add(innerRing);
 
-        middleRing = new InteractiveRing(bus, Constants.RING_ID_MIDDLE, 2.25f);
+        middleRing = new InteractiveRing(bus, Constants.RING_ID_MIDDLE, Constants.RING_RADIUS_MIDDLE);
         ringsGroup.add(middleRing);
 
-        outerRing = new InteractiveRing(bus, Constants.RING_ID_OUTER, 3.25f);
+        outerRing = new InteractiveRing(bus, Constants.RING_ID_OUTER, Constants.RING_RADIUS_OUTER);
         ringsGroup.add(outerRing);
 
         return ringsGroup;
     }
 
     private Entity createCentralButton() {
-        return new InteractiveDisc(bus, 0.65f);
+        return new InteractiveDisc(bus, Constants.CENTER_RADIUS);
     }
 
     private Entity createMarbles() {
@@ -129,6 +131,37 @@ public class GameScene extends EntityAggregator {
             guide.add(transform);
             guide.add(shape);
             group.add(guide);
+        }
+
+        return group;
+    }
+
+    private Entity createLocks() {
+        EntityAggregator group = new EntityAggregator();
+
+        group.add(new Shader(R.raw.hexa_vs, R.raw.hexa_fs));
+        group.add(new Texture(R.drawable.rings_color, Texture.TYPE_DIFFUSE));
+        group.add(new Texture(R.drawable.sand_normal, Texture.TYPE_NORMAL));
+
+        LockShape shape = new LockShape();
+
+        for (int step = 0; step < Constants.STEP_COUNT; step += gap) {
+            float angle = step * Constants.STEP_ANGLE;
+            EntityAggregator lock = new EntityAggregator();
+
+            Transform transform = new Transform();
+            transform.translateTo((float) cos(angle) * Constants.RING_RADIUS_OUTER, (float) sin(angle) * Constants.RING_RADIUS_OUTER, 0.25f);
+            transform.setOrientation(
+                    (float) cos(angle), (float) sin(angle), 0,
+                    (float) -sin(angle), (float) cos(angle), 0);
+
+            Material material = new Material(Constants.getColor(step), Constants.getColor(step));
+            material.setEmissive(true);
+            
+            lock.add(material);
+            lock.add(transform);
+            lock.add(shape);
+            group.add(lock);
         }
 
         return group;

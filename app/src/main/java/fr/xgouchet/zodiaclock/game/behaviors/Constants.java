@@ -24,18 +24,21 @@ public class Constants {
     public static final int RING_ID_OUTER = 2;
 
 
+
     @IntDef({RING_ID_INNER, RING_ID_MIDDLE, RING_ID_OUTER})
     public @interface RingId {
     }
 
-    public static final float RING_THICKNESS = 0.75f;
+    public static final float CENTER_RADIUS = 0.65f;
+
+    public static final float RING_THICKNESS = 0.8f;
     public static final float RING_HALF_THICKNESS = RING_THICKNESS / 2;
 
-    public static final float RING_RADIUS_INNER = 1.25f;
-    public static final float RING_RADIUS_MIDDLE = 2.25f;
-    public static final float RING_RADIUS_OUTER = 3.25f;
+    public static final float RING_RADIUS_INNER = 1.15f;
+    public static final float RING_RADIUS_MIDDLE = 2.05f;
+    public static final float RING_RADIUS_OUTER = 2.95f;
 
-    public static final float MARBLE_RADIUS = 0.3f;
+    public static final float MARBLE_RADIUS = RING_THICKNESS / 2.75f;
     public static final int[] MARBLE_COLORS = new int[]{
             R.color.marble_0_red,
             R.color.marble_1_orange,
@@ -52,7 +55,7 @@ public class Constants {
     };
 
 
-    public static final float GUIDE_LENGTH = 4.5f;
+    public static final float GUIDE_LENGTH = 4f;
 
     public static float getRingRadius(@Constants.RingId int ringId) {
         switch (ringId) {
