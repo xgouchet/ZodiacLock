@@ -1,4 +1,4 @@
-//FRAGMENT SHADER \n" +
+//FRAGMENT SHADER
 precision mediump float;
 
 // Global
